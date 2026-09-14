@@ -31,6 +31,10 @@ def translate(pattern: str) -> str:
                     i += 1
                     # "**/" may also match zero segments, so "a/**/b" matches "a/b"
                     out.append("(?:.*/)?")
+                elif i >= n and out and out[-1] == "/":
+                    # trailing "/**" should also match the directory itself,
+                    # so "build/**" matches "build" as well as "build/app.py"
+                    out[-1] = "(?:/.*)?"
                 else:
                     out.append(".*")
             else:

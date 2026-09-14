@@ -42,9 +42,9 @@ none of the `exclude` patterns, preserving the input order.
 | `[abc]` | one character from the set |
 | `[!abc]` | one character not in the set |
 
-Known limitation: a trailing `**` (as in `build/**`) matches everything
-*under* `build/` but not `build` itself. Use `build` and `build/**` together
-if you need both.
+A trailing `**` (as in `build/**`) matches the directory itself as well as
+everything under it, so `build/**` matches `build`, `build/app.py`, and
+`build/sub/app.py`.
 
 ## CLI
 

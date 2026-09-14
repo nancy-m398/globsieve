@@ -18,6 +18,13 @@ class TranslateTests(unittest.TestCase):
         # "a/**/b" should match "a/b" as well as "a/x/b"
         self.assertEqual(translate("a/**/b"), r"a/(?:.*/)?b")
 
+    def test_trailing_double_star_matches_directory_itself(self):
+        # "build/**" should match "build" as well as anything under it
+        self.assertEqual(translate("build/**"), r"build(?:/.*)?")
+
+    def test_bare_double_star_is_unaffected(self):
+        self.assertEqual(translate("**"), r".*")
+
     def test_question_mark_excludes_slash(self):
         self.assertEqual(translate("a?b"), r"a[^/]b")
 
@@ -44,9 +51,11 @@ class MatchTests(unittest.TestCase):
         self.assertTrue(match("a/b", "a/**/b"))
         self.assertTrue(match("a/x/y/b", "a/**/b"))
 
-    def test_trailing_double_star_does_not_match_the_directory_itself(self):
-        self.assertFalse(match("build", "build/**"))
+    def test_trailing_double_star_matches_the_directory_itself(self):
+        self.assertTrue(match("build", "build/**"))
         self.assertTrue(match("build/app.py", "build/**"))
+        self.assertTrue(match("build/sub/app.py", "build/**"))
+        self.assertFalse(match("buildx", "build/**"))
 
     def test_question_mark_excludes_slash(self):
         self.assertFalse(match("a/b", "a?b"))
