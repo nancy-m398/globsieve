@@ -37,6 +37,18 @@ class TranslateTests(unittest.TestCase):
     def test_unclosed_bracket_is_treated_as_literal(self):
         self.assertEqual(translate("[abc"), r"\[abc")
 
+    def test_brace_alternatives(self):
+        self.assertEqual(translate("*.{py,md}"), r"[^/]*\.(?:py|md)")
+
+    def test_brace_alternatives_may_contain_glob_syntax(self):
+        self.assertEqual(translate("{*.py,build/**}"), r"(?:[^/]*\.py|build(?:/.*)?)")
+
+    def test_nested_braces(self):
+        self.assertEqual(translate("a{b,{c,d}}"), r"a(?:b|(?:c|d))")
+
+    def test_unclosed_brace_is_treated_as_literal(self):
+        self.assertEqual(translate("{abc"), r"\{abc")
+
 
 class MatchTests(unittest.TestCase):
     def test_star_does_not_cross_slash(self):
@@ -72,6 +84,17 @@ class MatchTests(unittest.TestCase):
     def test_full_match_required(self):
         self.assertFalse(match("src/app.py.bak", "*.py"))
         self.assertFalse(match("app.py", "app"))
+
+    def test_brace_alternatives_match(self):
+        self.assertTrue(match("app.py", "*.{py,md}"))
+        self.assertTrue(match("app.md", "*.{py,md}"))
+        self.assertFalse(match("app.txt", "*.{py,md}"))
+
+    def test_brace_alternatives_with_glob_syntax(self):
+        self.assertTrue(match("src/app.py", "{*.py,src/**}"))
+        self.assertTrue(match("app.py", "{*.py,src/**}"))
+        self.assertTrue(match("src/app.md", "{*.py,src/**}"))
+        self.assertFalse(match("other/app.md", "{*.py,src/**}"))
 
 
 class FilterPathsTests(unittest.TestCase):

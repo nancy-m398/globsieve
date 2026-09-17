@@ -41,10 +41,15 @@ none of the `exclude` patterns, preserving the input order.
 | `?` | one character except `/` |
 | `[abc]` | one character from the set |
 | `[!abc]` | one character not in the set |
+| `{a,b}` | any one of the comma-separated alternatives |
 
 A trailing `**` (as in `build/**`) matches the directory itself as well as
 everything under it, so `build/**` matches `build`, `build/app.py`, and
 `build/sub/app.py`.
+
+Brace alternatives can contain glob syntax themselves, including nested
+braces: `*.{py,md}` matches `app.py` and `app.md`, and
+`{*.py,src/**}` matches `app.py` and anything under `src/`.
 
 ## CLI
 
