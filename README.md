@@ -61,6 +61,15 @@ src/app.py
 `--include` and `--exclude` can be given more than once. With no `--include`,
 everything under `root` is a candidate.
 
+To filter a list of paths from another command instead of walking a
+directory, use `--from-stdin`:
+
+```
+$ find . -type f | globsieve --from-stdin --include '**/*.py'
+```
+
+`ROOT` and `--from-stdin` are mutually exclusive.
+
 ## Install
 
 No dependencies beyond the standard library.
